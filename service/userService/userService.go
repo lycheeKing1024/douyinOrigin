@@ -1,6 +1,8 @@
 package userService
 
-import "douyinOrigin/dao/userDao"
+import (
+	"douyinOrigin/dao/userDao"
+)
 
 // User 最终封装后,controller返回的User结构体
 type User struct {
@@ -23,4 +25,7 @@ type UserService interface {
 
 	// InsertTableUser 将user插入到数据表中
 	InsertTableUser(tableUser *userDao.TableUser) bool
+
+	// GetUserByCurId 在登录情况（curid）下根据user_id获取User对象，curid判断是否点赞
+	GetUserByCurId(id int64, curId int64) (User, error)
 }

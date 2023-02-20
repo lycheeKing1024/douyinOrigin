@@ -1,7 +1,8 @@
-package userDao
+package dao
 
 import (
 	"fmt"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	//"gorm.io/gorm/logger"
@@ -42,10 +43,10 @@ func InitMySQL() {
 	})
 	if err != nil {
 		//	这里就使用log打印了
-		//log.Panicln("数据库连接失败，error: " + err.Error())
+		//log.Panicle("数据库连接失败，error: " + err.Error())
 		fmt.Println(err.Error())
 	} else {
-		//log.Panicln("数据库连接成功")
+		//log.Panicle("数据库连接成功")
 		fmt.Println("数据库连接成功")
 	}
 	// 3.程序退出关闭数据库

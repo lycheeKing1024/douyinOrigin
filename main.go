@@ -1,10 +1,11 @@
 package main
 
 import (
-	"douyinOrigin/dao/userDao"
+	"douyinOrigin/dao"
 	"douyinOrigin/router"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -26,5 +27,5 @@ func main() {
 // 加载项目依赖
 func initDeps() {
 	//初始化MySQL数据库
-	userDao.InitMySQL()
+	dao.InitMySQL()
 }

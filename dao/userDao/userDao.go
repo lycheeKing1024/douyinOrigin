@@ -1,6 +1,7 @@
 package userDao
 
 import (
+	"douyinOrigin/dao"
 	"fmt"
 )
 
@@ -24,7 +25,7 @@ func (u TableUser) TableName() string {
 // GetTableUserList 获取全部的User对象
 func GetTableUserList() ([]TableUser, error) {
 	TableUsers := []TableUser{}
-	if err := SqlSession.Find(&TableUsers).Error; err != nil {
+	if err := dao.SqlSession.Find(&TableUsers).Error; err != nil {
 		//log.Panicln(err.Error())
 		fmt.Println(err.Error())
 		return TableUsers, err //将查询结果和错误信息返回
@@ -35,7 +36,7 @@ func GetTableUserList() ([]TableUser, error) {
 // GetTableUserByUsername 根据user_name获得User对象
 func GetTableUserByUsername(username string) (TableUser, error) {
 	tableUser := TableUser{}
-	if err := SqlSession.Where("name=?", username).First(&tableUser).Error; err != nil {
+	if err := dao.SqlSession.Where("name=?", username).First(&tableUser).Error; err != nil {
 		//log.Panicln(err.Error())
 		//fmt.Println(err.Error())
 		return tableUser, err
@@ -46,7 +47,7 @@ func GetTableUserByUsername(username string) (TableUser, error) {
 // GetTableUserById 根据 user_id 获得User对象
 func GetTableUserById(id int64) (TableUser, error) {
 	tableUser := TableUser{}
-	if err := SqlSession.Where("id=?", id).First(&tableUser).Error; err != nil {
+	if err := dao.SqlSession.Where("id=?", id).First(&tableUser).Error; err != nil {
 		//log.Panicln(err.Error())
 		fmt.Println(err.Error())
 		return tableUser, err
@@ -56,7 +57,7 @@ func GetTableUserById(id int64) (TableUser, error) {
 
 // InsertTableUser 将user插入到数据表中
 func InsertTableUser(user *TableUser) bool {
-	if err := SqlSession.Create(&user).Error; err != nil {
+	if err := dao.SqlSession.Create(&user).Error; err != nil {
 		//log.Panicln(err.Error())
 		fmt.Println(err.Error())
 		return false

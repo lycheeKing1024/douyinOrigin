@@ -54,7 +54,23 @@ func (u UserServiceImpl) GetTableUserById(id int64) userDao.TableUser {
 	return tableUser
 }
 
+// GetUserById 在未登录情况下根据user_id获取User对象
 func (u UserServiceImpl) GetUserById(id int64) (User, error) {
+	user := User{}
+	tableUser, err := userDao.GetTableUserById(id)
+	if err != nil {
+		fmt.Println("User Not Found by Id")
+		return user, err
+	}
+	user = User{
+		Id:   tableUser.Id,
+		Name: tableUser.Name,
+	}
+	return user, nil
+}
+
+// GetUserByCurId 在登录情况（curid）下根据user_id获取User对象，curid判断是否点赞
+func (u UserServiceImpl) GetUserByCurId(id int64, curId int64) (User, error) {
 	user := User{}
 	tableUser, err := userDao.GetTableUserById(id)
 	if err != nil {
