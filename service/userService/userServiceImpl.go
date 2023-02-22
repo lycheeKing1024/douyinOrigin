@@ -71,6 +71,7 @@ func (u UserServiceImpl) GetUserById(id int64) (User, error) {
 
 // GetUserByCurId 在登录情况（curid）下根据user_id获取User对象，curid判断是否点赞
 func (u UserServiceImpl) GetUserByCurId(id int64, curId int64) (User, error) {
+	fmt.Printf("curId：%v\n", curId)
 	user := User{}
 	tableUser, err := userDao.GetTableUserById(id)
 	if err != nil {
@@ -116,20 +117,22 @@ func GenerateToken(username string) string {
 
 // NewToken 根据信息创建token
 func NewToken(u userDao.TableUser) string {
-	expiresTime := time.Now().Unix() + int64(config.OneDayOfHours)
+	expiresTime := time.Now().Add(time.Hour * time.Duration(12)) //设置过期时间为12小时
 	fmt.Printf("expiresTime: %v\n", expiresTime)
 	id64 := u.Id
 	fmt.Printf("id: %v\n", strconv.FormatInt(id64, 10))
-	claims := jwt.StandardClaims{
-		Audience:  u.Name,
-		ExpiresAt: expiresTime,
-		Id:        strconv.FormatInt(id64, 10),
-		IssuedAt:  time.Now().Unix(),
-		Issuer:    "tiktok",
-		NotBefore: time.Now().Unix(),
-		Subject:   "token",
+	claims := MyClaims{
+		jwt.RegisteredClaims{
+			Audience:  jwt.ClaimStrings{u.Name},        //受众
+			ExpiresAt: jwt.NewNumericDate(expiresTime), //过期时间
+			ID:        strconv.FormatInt(id64, 10),     //编号
+			IssuedAt:  jwt.NewNumericDate(time.Now()),  //签发时间
+			Issuer:    "yangming",                      //签发人
+			NotBefore: jwt.NewNumericDate(time.Now()),  //生效时间
+			Subject:   "token",                         //主题
+		},
 	}
-	var jwtSecret = []byte(config.Secret)
+
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	if token, err := tokenClaims.SignedString(jwtSecret); err == nil {
 		token = "Bearer " + token
@@ -139,4 +142,27 @@ func NewToken(u userDao.TableUser) string {
 		println("generate token fail\n")
 		return "fail"
 	}
+}
+
+type MyClaims struct {
+	jwt.RegisteredClaims // 注意!这是jwt-go的v4版本新增的，原先是jwt.StandardClaims
+}
+
+var jwtSecret = []byte(config.Secret) //jwt密钥
+// 解析token
+func (UserServiceImpl) ParseToken(tokenString string) (*MyClaims, error) {
+	//tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
+	prefixLen := len("Bearer ")
+	tokenString = tokenString[prefixLen:]
+	fmt.Println(tokenString)
+	tokenClaims, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+	if err != nil {
+		fmt.Printf("解析token失败！！！,err：%v", err)
+	}
+	if claims, ok := tokenClaims.Claims.(*MyClaims); ok && tokenClaims.Valid {
+		return claims, nil
+	}
+	return nil, err
 }

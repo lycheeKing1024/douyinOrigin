@@ -2,6 +2,7 @@ package main
 
 import (
 	"douyinOrigin/dao"
+	"douyinOrigin/middleware"
 	"douyinOrigin/router"
 	"log"
 
@@ -28,4 +29,8 @@ func main() {
 func initDeps() {
 	//初始化MySQL数据库
 	dao.InitMySQL()
+	//初始化ftp连接
+	middleware.InitFTP()
+	//	初始话ssh连接
+	middleware.InitSSH()
 }

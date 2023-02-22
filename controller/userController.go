@@ -25,7 +25,7 @@ type UserResponse struct {
 	User     userService.User `json:"user"`
 }
 
-// Register 用户注册 /douyin/user/register/
+// Register 用户注册 /user/register/
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
@@ -63,7 +63,7 @@ func Register(c *gin.Context) {
 	}
 }
 
-// Login 用户登录 /douyin/user/login/
+// Login 用户登录 /user/login/
 func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
@@ -87,7 +87,7 @@ func Login(c *gin.Context) {
 
 }
 
-// UserInfo 用户信息 /douyin/user/
+// UserInfo 用户信息 /user/
 func UserInfo(c *gin.Context) {
 	userId := c.Query("user_id") //从请求头中拿出数据
 	//将字符串转换为数字 参数2：转换的进制；参数3 返回结果的bit大小
