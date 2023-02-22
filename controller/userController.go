@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"douyinOrigin/dao/userDao"
+	"douyinOrigin/dao"
+	"douyinOrigin/middleware"
 	"douyinOrigin/service/userService"
 	"net/http"
 	"strconv"
@@ -41,16 +42,16 @@ func Register(c *gin.Context) {
 			},
 		})
 	} else { //插入新用户
-		newUser := userDao.TableUser{
+		newUser := dao.TableUser{
 			Name: username,
 			//调用加密算法先加密再存入数据库中
-			Password: userService.EnCoder(password),
+			Password: middleware.EnCoder(password),
 		}
 		if usi.InsertTableUser(&newUser) != true {
 			println("Insert newUser Fail")
 		}
-		u := usi.GetTableUserByUsername(username)    //返回user结构体
-		token := userService.GenerateToken(username) //生成鉴权
+		u := usi.GetTableUserByUsername(username)   //返回user结构体
+		token := middleware.GenerateToken(username) //生成鉴权
 		//创建成功后返回用户 id 和权限token
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
@@ -68,12 +69,12 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 	//将用户输入密码加密后与数据库中的密码比较，提高安全性
-	encoderPassword := userService.EnCoder(password)
+	encoderPassword := middleware.EnCoder(password)
 	println("encoderPassword: ", encoderPassword) //标准错误输出encoderPassword
 	usi := userService.UserServiceImpl{}
 	u := usi.GetTableUserByUsername(username) //查询数据库中是否有
 	if encoderPassword == u.Password {
-		token := userService.GenerateToken(username) //对用户名加鉴权
+		token := middleware.GenerateToken(username) //对用户名加鉴权
 		//	返回响应
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{

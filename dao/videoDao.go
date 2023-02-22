@@ -1,8 +1,7 @@
-package videoDao
+package dao
 
 import (
 	"douyinOrigin/config"
-	"douyinOrigin/dao"
 	"douyinOrigin/middleware"
 	"fmt"
 	"io"
@@ -27,20 +26,20 @@ func (TableVideo) TableName() string {
 }
 
 // GetVideoByVeidoId 根据视频id获取视频信息
-func GetVideoByVeidoId(VideoId int64) (TableVideo, error) {
+func GetVideoByVideoId(VideoId int64) (TableVideo, error) {
 	var TableVideo TableVideo
 	TableVideo.Id = VideoId
-	result := dao.SqlSession.First(&TableVideo)
+	result := SqlSession.First(&TableVideo)
 	if result.Error != nil {
 		return TableVideo, result.Error
 	}
 	return TableVideo, nil
 }
 
-// GetVideoByAuthorId 根据作者id查询视频信息，返回切片
-func GetVideoByAuthorId(authorId int64) ([]TableVideo, error) {
+// GetVideosByAuthorId 根据作者id查询视频信息，返回切片
+func GetVideosByAuthorId(authorId int64) ([]TableVideo, error) {
 	var TableVideos []TableVideo
-	result := dao.SqlSession.Where("authorId=?", authorId).Find(&TableVideos)
+	result := SqlSession.Where("author_id=?", authorId).Find(&TableVideos)
 	if result.Error != nil {
 		//如果出现问题，返回对应到空，并且返回错误信息
 		return nil, result.Error
@@ -51,7 +50,7 @@ func GetVideoByAuthorId(authorId int64) ([]TableVideo, error) {
 // GetVideoByLastTime 根据传入的时间来获取这个时间之前的一些数据
 func GetVideoByLastTime(lastTime time.Time) ([]TableVideo, error) {
 	Videos := make([]TableVideo, 0, config.VideoNum)
-	result := dao.SqlSession.Where("publish_time<?", lastTime).Order("publish_time desc").Limit(config.VideoNum).
+	result := SqlSession.Where("publish_time<=?", lastTime).Order("publish_time desc").Limit(config.VideoNum).
 		Find(&Videos).Error
 	if result != nil {
 		return Videos, result
@@ -101,9 +100,19 @@ func Save(videoName string, imageName string, authorId int64, title string) erro
 		PublishTime: time.Now(),
 		Title:       title,
 	}
-	result := dao.SqlSession.Save(&video)
+	result := SqlSession.Save(&video)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
+}
+
+// GetVideoIdByAuthorId // 通过作者id来查询发布的视频id切片集合
+func GetVideoIdByAuthorId(authorId int64) ([]int64, error) {
+	var videoId []int64
+	if err := SqlSession.Where("author_id").Pluck("id", &videoId).Error; err != nil {
+		fmt.Println("发布列表获取视频id失败")
+		return nil, err
+	}
+	return videoId, nil
 }

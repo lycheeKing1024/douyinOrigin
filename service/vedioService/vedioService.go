@@ -1,14 +1,14 @@
 package VideoService
 
 import (
-	"douyinOrigin/dao/videoDao"
+	"douyinOrigin/dao"
 	"douyinOrigin/service/userService"
 	"mime/multipart"
 	"time"
 )
 
 type Video struct {
-	videoDao.TableVideo
+	dao.TableVideo
 	Author        userService.User
 	FavoriteCount int  `json:"favorite_count"`
 	CommentCount  int  `json:"comment_count"`
@@ -24,8 +24,8 @@ type VideoService interface {
 	// PublishVideo 将传入的视频流保存到文件服务器中，并存储在mysql中
 	PublishVideo(data *multipart.FileHeader, userId int64, title string) error
 
-	// TableVideo 通过userId查询对应用户发布的视频，并返回视频数组
-	TableVideo(userId int64, curID int64) ([]Video, error)
+	// List TableVideo 通过userId查询对应用户发布的视频，并返回视频数组
+	List(userId int64) ([]Video, error)
 
 	// GetVideoIdList 通过一个作者id，返回用户发布的视频id切片数组
 	GetVideoIdList(userId int64) ([]int64, error)

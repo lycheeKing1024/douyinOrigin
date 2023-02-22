@@ -15,5 +15,6 @@ func InitRouter(r *gin.Engine) {
 		apiServer.GET("/user/", controller.UserInfo)
 		apiServer.GET("/feed/", controller.Feed)
 		apiServer.POST("/publish/action/", controller.Publish)
+		apiServer.GET("/publish/list/", controller.PublishList)
 	}
 }
