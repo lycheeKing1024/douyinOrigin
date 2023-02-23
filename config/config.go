@@ -30,10 +30,10 @@ const PortSSH = 22
 const MaxMsgCount = 100
 const SSHHeartbeatTime = 10 * 60
 
-const IsLike = 0     //点赞
-const UnLike = 0     //取消点赞
-const LikeAction = 1 //点赞的行为
-const Attempts = 3   //操作数据库的最大尝试次数
+const IsLike = 1      //点赞
+const UnLike = 2      //取消点赞
+const LikeAction = 1  //点赞的行为
+const Atservicets = 3 //操作数据库的最大尝试次数
 
 /* 时间*/
 var OneDayOfHours = 60 * 60 * 24
@@ -43,3 +43,7 @@ var OneYear = 365 * 60 * 60 * 24
 var ExpireTime = time.Hour * 48 // 设置Redis数据热度消散时间。
 
 const DefaultRedisValue = -1 //redis中key对应的预设值，防脏读
+
+// 评论状态
+const ValidComment = 1   //评论状态：有效
+const InvalidComment = 2 //评论状态：取消（删除）

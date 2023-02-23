@@ -1,6 +1,4 @@
-package likeService
-
-import VideoService "douyinOrigin/service/vedioService"
+package service
 
 type LikeService interface {
 
@@ -21,5 +19,5 @@ type LikeService interface {
 	FavouriteAction(userId int64, videoId int64, actionType int32) error
 
 	// GetFavouriteList 获取当前用户的所有点赞视频，调用videoService的方法
-	GetFavouriteList(userId int64, curId int64) ([]VideoService.Video, error)
+	GetFavouriteList(userId int64, curId int64) ([]Video, error)
 }

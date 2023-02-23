@@ -2,8 +2,10 @@ package controller
 
 import (
 	"douyinOrigin/dao"
-	"douyinOrigin/middleware"
-	"douyinOrigin/service/userService"
+	"douyinOrigin/middleware/jwt"
+	"douyinOrigin/service"
+
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -23,7 +25,7 @@ type UserLoginResponse struct {
 }
 type UserResponse struct {
 	Response `binding:"required"`
-	User     userService.User `json:"user"`
+	User     service.User `json:"user"`
 }
 
 // Register 用户注册 /user/register/
@@ -31,7 +33,7 @@ func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	usi := userService.UserServiceImpl{}
+	usi := service.UserServiceImpl{}
 
 	u := usi.GetTableUserByUsername(username)
 	if username == u.Name {
@@ -45,13 +47,13 @@ func Register(c *gin.Context) {
 		newUser := dao.TableUser{
 			Name: username,
 			//调用加密算法先加密再存入数据库中
-			Password: middleware.EnCoder(password),
+			Password: jwt.EnCoder(password),
 		}
 		if usi.InsertTableUser(&newUser) != true {
 			println("Insert newUser Fail")
 		}
-		u := usi.GetTableUserByUsername(username)   //返回user结构体
-		token := middleware.GenerateToken(username) //生成鉴权
+		u := usi.GetTableUserByUsername(username) //返回user结构体
+		token := jwt.GenerateToken(username)      //生成鉴权
 		//创建成功后返回用户 id 和权限token
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
@@ -69,12 +71,12 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 	//将用户输入密码加密后与数据库中的密码比较，提高安全性
-	encoderPassword := middleware.EnCoder(password)
+	encoderPassword := jwt.EnCoder(password)
 	println("encoderPassword: ", encoderPassword) //标准错误输出encoderPassword
-	usi := userService.UserServiceImpl{}
+	usi := service.UserServiceImpl{}
 	u := usi.GetTableUserByUsername(username) //查询数据库中是否有
 	if encoderPassword == u.Password {
-		token := middleware.GenerateToken(username) //对用户名加鉴权
+		token := jwt.GenerateToken(username) //对用户名加鉴权
 		//	返回响应
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
@@ -84,6 +86,12 @@ func Login(c *gin.Context) {
 			UserId: u.Id,
 			Token:  token,
 		})
+	} else {
+		//	返回响应
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "账号或密码错误",
+		})
 	}
 
 }
@@ -91,10 +99,20 @@ func Login(c *gin.Context) {
 // UserInfo 用户信息 /user/
 func UserInfo(c *gin.Context) {
 	userId := c.Query("user_id") //从请求头中拿出数据
+	//token := c.Query("token")
 	//将字符串转换为数字 参数2：转换的进制；参数3 返回结果的bit大小
 	id, _ := strconv.ParseInt(userId, 10, 64)
-	usi := userService.UserServiceImpl{}
-	if u, err := usi.GetUserById(id); err == nil {
+	usi := service.UserServiceImpl{}
+	//var u userService.User
+	//var err error
+	//if token != "" {
+	//	u, err = usi.GetUserByCurId(id, id)
+	//} else {
+	//	u, err = usi.GetUserById(id)
+	//}
+	u, err := usi.GetUserByCurId(id, id)
+	if err == nil {
+		fmt.Println("用户信息不为空")
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 0},
 			User:     u,

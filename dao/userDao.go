@@ -13,6 +13,10 @@ type TableUser struct {
 	Name     string
 	Password string
 	//NickName string
+	Avatar          string // 用户头像
+	BackgroundImage string // 用户个人页顶部大图
+	Signature       string // 个人简介
+	WorkCount       int64  // 作品数
 }
 
 // TableName 设置表名，可以通过struct类型定义 TableName函数，返回当前struct绑定的mysql表名是什么

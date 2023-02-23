@@ -3,6 +3,7 @@ package main
 import (
 	"douyinOrigin/dao"
 	"douyinOrigin/middleware"
+	"douyinOrigin/middleware/rabbitmq"
 	"douyinOrigin/router"
 	"log"
 
@@ -33,4 +34,14 @@ func initDeps() {
 	middleware.InitFTP()
 	//	初始话ssh连接
 	middleware.InitSSH()
+
+	// 初始化redis-DB0的连接，follow选择的DB0.
+	middleware.InitRedis()
+	// 初始化rabbitMQ。
+	rabbitmq.InitRabbitMQ()
+
+	// 初始化Like的相关消息队列，并开启消费。
+	rabbitmq.InitLikeRabbitMQ()
+	//初始化Comment的消息队列，并开启消费
+	rabbitmq.InitCommentRabbitMQ()
 }

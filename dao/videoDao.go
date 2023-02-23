@@ -9,13 +9,10 @@ import (
 )
 
 type TableVideo struct {
-	Id       int64  `json:"id"` //视频id
-	AuthorId int64  //视频作者信息
-	PlayUrl  string `json:"play_url"`  //视频播放地址
-	CoverUrl string `json:"cover_url"` //视频封面地址
-	//FavoriteCount int    `json:"favorite_count"`
-	//CommentCount  int    `json:"comment_count"`
-	//IsFavorite    bool   `json:"is_favorite"`
+	Id          int64  `json:"id"` //视频id
+	AuthorId    int64  //视频作者信息
+	PlayUrl     string `json:"play_url"`  //视频播放地址
+	CoverUrl    string `json:"cover_url"` //视频封面地址
 	PublishTime time.Time
 	Title       string `json:"title"` //视频标题
 }
@@ -110,8 +107,8 @@ func Save(videoName string, imageName string, authorId int64, title string) erro
 // GetVideoIdByAuthorId // 通过作者id来查询发布的视频id切片集合
 func GetVideoIdByAuthorId(authorId int64) ([]int64, error) {
 	var videoId []int64
-	if err := SqlSession.Where("author_id").Pluck("id", &videoId).Error; err != nil {
-		fmt.Println("发布列表获取视频id失败")
+	if err := SqlSession.Model(&TableVideo{}).Where("author_id").Pluck("id", &videoId).Error; err != nil {
+		fmt.Printf("发布列表获取视频id失败,err：%v\n", err)
 		return nil, err
 	}
 	return videoId, nil

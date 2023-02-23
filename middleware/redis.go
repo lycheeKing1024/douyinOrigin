@@ -53,7 +53,7 @@ func InitRedis() {
 	RdbVCid = redis.NewClient(&redis.Options{
 		Addr:     "1.15.97.114:6379",
 		Password: "yangming666@redis",
-		DB:       11, // lsy 选择将video_id中的评论id s存入 DB11.
+		DB:       11, // 选择将video_id中的评论id s存入 DB11.
 	})
 
 	RdbCVid = redis.NewClient(&redis.Options{

@@ -16,5 +16,12 @@ func InitRouter(r *gin.Engine) {
 		apiServer.GET("/feed/", controller.Feed)
 		apiServer.POST("/publish/action/", controller.Publish)
 		apiServer.GET("/publish/list/", controller.PublishList)
+
+		//互动接口
+		apiServer.POST("/favorite/action/", controller.FavoriteAction)
+		apiServer.GET("/favorite/list/", controller.GetFavoriteList)
+		apiServer.POST("/comment/action/", controller.CommentAction)
+		apiServer.GET("/comment/list/", controller.CommentList)
+
 	}
 }
