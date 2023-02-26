@@ -6,6 +6,10 @@ import (
 	"douyinOrigin/middleware/rabbitmq"
 	"douyinOrigin/router"
 	"log"
+	"net/http"
+	"net/http/pprof"
+	_ "net/http/pprof"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +28,19 @@ func main() {
 	if err != nil {
 		log.Panicln("runErr: ", err)
 	}
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/debug/pprof/", pprof.Index)
+		mux.HandleFunc("/debug/pprof/heap", pprof.Index)
+		mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+		mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		if err := http.ListenAndServe(":9090", nil); err != nil {
+			log.Fatal(err)
+		}
+		os.Exit(0)
+	}()
 }
 
 // 加载项目依赖

@@ -27,7 +27,7 @@ func (u TableUser) TableName() string {
 
 // GetTableUserList 获取全部的User对象
 func GetTableUserList() ([]TableUser, error) {
-	TableUsers := []TableUser{}
+	var TableUsers []TableUser
 	if err := SqlSession.Find(&TableUsers).Error; err != nil {
 		//log.Panicln(err.Error())
 		fmt.Println(err.Error())

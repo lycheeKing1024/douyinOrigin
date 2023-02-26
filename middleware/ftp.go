@@ -28,8 +28,3 @@ func InitFTP() {
 	//	维持长连接
 	go keepAlive()
 }
-
-//func keepAlive() {
-//	time.Sleep(time.Duration(config.HeartbeatTime) * time.Second)
-//	MyFTP.Noop()
-//}

@@ -14,6 +14,7 @@ import (
 )
 
 type CommentServiceImpl struct {
+	UserService
 }
 
 // CountFromVideoId

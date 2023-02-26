@@ -1,0 +1,126 @@
+@startuml
+namespace service {
+    class CommentInfo << (S,Aquamarine) >> {
+        + Content string
+        + CreateDate string
+        + ID int64
+        + User User
+
+    }
+    interface CommentService  {
+        + CountFromVideoId(id int64) (int64, error)
+        + Send(comment dao.Comment) (CommentInfo, error)
+        + DelComment(commentId int64) error
+        + GetList(videoId int64, userId int64) ([]CommentInfo, error)
+
+    }
+    class CommentServiceImpl << (S,Aquamarine) >> {
+        + CountFromVideoId(videoId int64) (int64, error)
+        + Send(comment dao.Comment) (CommentInfo, error)
+        + DelComment(commentId int64) error
+        + GetList(videoId int64, userId int64) ([]CommentInfo, error)
+
+    }
+    class CommentSlice << (S,Aquamarine) >> {
+        + Len() int
+        + Swap(i int, j int)
+        + Less(i int, j int) bool
+
+    }
+    interface LikeService  {
+        + IsFavourite(videoId int64, userId int64) (bool, error)
+        + FavouriteCount(videoId int64) (int64, error)
+        + TotalFavourite(userId int64) (int64, error)
+        + FavouriteVideoCount(userId int64) (int64, error)
+        + FavouriteAction(userId int64, videoId int64, actionType int32) error
+        + GetFavouriteList(userId int64, curId int64) ([]Video, error)
+
+    }
+    class LikeServiceImpl << (S,Aquamarine) >> {
+        - addFavouriteVideoList(videoId int64, curId int64, favoriteVideoList *[]Video, wg *sync.WaitGroup)
+        - addVideoLikeCount(videoId int64, videoLikeCountList *[]int64, wg *sync.WaitGroup)
+
+        + IsFavourite(videoId int64, userId int64) (bool, error)
+        + FavouriteCount(videoId int64) (int64, error)
+        + FavouriteAction(userId int64, videoId int64, actionType int32) error
+        + GetFavouriteList(userId int64, curId int64) ([]Video, error)
+        + TotalFavourite(userId int64) (int64, error)
+        + FavouriteVideoCount(userId int64) (int64, error)
+
+    }
+    class User << (S,Aquamarine) >> {
+        + Id int64
+        + Name string
+        + FollowCount int
+        + FollowerCount int
+        + IsFollow bool
+        + FavoriteCount int64
+        + TotalFavorited string
+        + Signature string
+        + WorkCount int64
+        + Avatar string
+        + BackgroundImage string
+
+    }
+    interface UserService  {
+        + GetTableUserList() []dao.TableUser
+        + GetTableUserByUsername(name string) dao.TableUser
+        + GetTableUserById(id int64) dao.TableUser
+        + InsertTableUser(tableUser *dao.TableUser) bool
+        + GetUserByCurId(id int64, curId int64) (User, error)
+
+    }
+    class UserServiceImpl << (S,Aquamarine) >> {
+        + GetTableUserList() []dao.TableUser
+        + GetTableUserByUsername(name string) dao.TableUser
+        + GetTableUserById(id int64) dao.TableUser
+        + GetUserById(id int64) (User, error)
+        + GetUserByCurId(id int64, curId int64) (User, error)
+        + InsertTableUser(tableUser *dao.TableUser) bool
+
+    }
+    class Video << (S,Aquamarine) >> {
+        + Author User
+        + FavoriteCount int64
+        + CommentCount int64
+        + IsFavorite bool
+
+    }
+    interface VideoService  {
+        + Feed(lastTime time.Time, userId int64) ([]Video, time.Time, error)
+        + GetVideo(videoId int64, userId int64) (Video, error)
+        + PublishVideo(data *multipart.FileHeader, userId int64, title string) error
+        + List(userId int64) ([]Video, error)
+        + GetVideoIdList(userId int64) ([]int64, error)
+
+    }
+    class VideoServiceImpl << (S,Aquamarine) >> {
+        - copyVideos(result *[]Video, data *[]dao.TableVideo, userId int64) error
+        - createVideo(video *Video, data *dao.TableVideo, userId int64)
+
+        + Feed(lastTime time.Time, userId int64) ([]Video, time.Time, error)
+        + GetVideo(videoId int64, userId int64) (Video, error)
+        + PublishVideo(data *multipart.FileHeader, userId int64, title string) error
+        + List(userId int64) ([]Video, error)
+        + GetVideoIdList(userId int64) ([]int64, error)
+
+    }
+    class service.CommentSlice << (T, #FF7700) >>  {
+    }
+}
+"service.UserService" *-- "service.CommentServiceImpl"
+"service.LikeService" *-- "service.LikeServiceImpl"
+"service.UserServiceImpl" *-- "service.LikeServiceImpl"
+"service.LikeService" *-- "service.UserServiceImpl"
+"dao.TableVideo" *-- "service.Video"
+"service.CommentServiceImpl" *-- "service.VideoServiceImpl"
+"service.LikeServiceImpl" *-- "service.VideoServiceImpl"
+"service.UserServiceImpl" *-- "service.VideoServiceImpl"
+
+"service.CommentService" <|-- "service.CommentServiceImpl"
+"service.LikeService" <|-- "service.LikeServiceImpl"
+"service.UserService" <|-- "service.UserServiceImpl"
+"service.VideoService" <|-- "service.VideoServiceImpl"
+
+"service.[]CommentInfo" #.. "service.CommentSlice"
+@enduml

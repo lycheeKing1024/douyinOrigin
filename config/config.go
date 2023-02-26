@@ -11,7 +11,10 @@ const VideoNum = 5
 // ftp服务器地址
 const ConUftp = "1.15.97.114:21"
 const FtpUser = "uftp"
-const FtpPassword = "yangming666@uftp"
+
+//const FtpPassword = "yangming666@uftp" //密码已改
+
+const FtpPassword = "yangming&uftp666"
 const HeartbeatTime = 2 * 60
 
 // PlayUrlPrefix 存储视频的链接
@@ -24,7 +27,9 @@ const TimeLayout = "2006-01-02 15:04:05"
 // HostSSH SSH配置
 const HostSSH = "1.15.97.114"
 const UserSSH = "uftp"
-const PasswordSSH = "yangming666@uftp"
+
+const PasswordSSH = "yangming&uftp666"
+
 const TypeSSH = "password"
 const PortSSH = 22
 const MaxMsgCount = 100

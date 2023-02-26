@@ -133,7 +133,7 @@ func (vsi VideoServiceImpl) PublishVideo(data *multipart.FileHeader, userId int6
 		fmt.Printf("data.open()失败，%v", err)
 		return err
 	}
-	fmt.Println("data.open() 成功\n")
+	fmt.Println("data.open() 成功")
 	//	生成一个一个uuid作为视频名字 v4版本
 	videoName := uuid.New().String()
 	fmt.Printf("视频名称是%v\n", videoName)

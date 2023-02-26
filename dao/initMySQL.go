@@ -38,9 +38,7 @@ func InitMySQL() {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", username, password, host, port, dbName)
 	//要支持完整的UTF-8编码，需要将 charset=utf8 改为 charset=utf8mb4
 	//	连接mysql
-	SqlSession, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		//Logger: newLogger,
-	})
+	SqlSession, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		//	这里就使用log打印了
 		//log.Panicle("数据库连接失败，error: " + err.Error())

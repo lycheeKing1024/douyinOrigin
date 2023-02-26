@@ -7,6 +7,7 @@ import (
 )
 
 func InitRouter(r *gin.Engine) {
+
 	apiServer := r.Group("/douyin")
 	{
 		//基础接口
